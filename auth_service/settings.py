@@ -29,7 +29,19 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-change-this-in-produc
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,healthcheck.railway.app', cast=lambda v: [s.strip() for s in v.split(',')])
+# ALLOWED_HOSTS configuration
+if DEBUG:
+    ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,healthcheck.railway.app', cast=lambda v: [s.strip() for s in v.split(',')])
+else:
+    # In production, allow Railway domains and any .railway.app subdomain
+    default_hosts = 'localhost,127.0.0.1,healthcheck.railway.app,.railway.app,*.railway.app'
+    ALLOWED_HOSTS = config('ALLOWED_HOSTS', default=default_hosts, cast=lambda v: [s.strip() for s in v.split(',')])
+    
+    # Add any Railway-specific domains
+    import os
+    railway_domain = os.environ.get('RAILWAY_STATIC_URL')
+    if railway_domain:
+        ALLOWED_HOSTS.append(railway_domain.replace('https://', '').replace('http://', ''))
 
 
 # Application definition
