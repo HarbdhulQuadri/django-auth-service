@@ -1,1 +1,1 @@
-web: python manage.py migrate && gunicorn auth_service.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+web: python manage.py migrate && python manage.py collectstatic --noinput && gunicorn auth_service.wsgi:application --bind 0.0.0.0:$PORT --workers 1 --timeout 120
