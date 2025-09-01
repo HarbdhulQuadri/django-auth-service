@@ -12,7 +12,7 @@ Class-based views
     2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
 Including another URLconf
     1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
+    2. Add a URL to urlpatterns:  path('blog/', include('other_app.urls'))
 """
 from django.contrib import admin
 from django.urls import path, include
@@ -37,13 +37,49 @@ schema_view = get_schema_view(
     openapi.Info(
         title="Django Auth Service API",
         default_version='v1',
-        description="A comprehensive Django authentication system with JWT tokens, password reset functionality, and PostgreSQL/Redis integration.",
+        description="""
+        # Django Authentication System with PostgreSQL, Redis & Deployment
+        
+        A comprehensive Django authentication system built for modern web applications requiring secure user authentication.
+        
+        ## Features
+        - **JWT Authentication** - Secure token-based authentication
+        - **Custom User Model** - Email-based authentication with full name
+        - **Password Reset** - Redis-based token system with 10-minute expiry
+        - **PostgreSQL Database** - Robust data storage
+        - **Redis Caching** - Fast token storage and session management
+        - **Rate Limiting** - Protection against brute force attacks
+        - **Production Ready** - Configured for Railway/Render deployment
+        
+        ## Authentication
+        This API uses JWT (JSON Web Tokens) for authentication. Include the token in the Authorization header:
+        ```
+        Authorization: Bearer <your_access_token>
+        ```
+        
+        ## Rate Limiting
+        - **Login**: 5 attempts per minute per IP address
+        - **Password Reset**: 3 requests per hour per email address
+        
+        ## Environment Variables
+        - `DATABASE_URL` - PostgreSQL connection string
+        - `REDIS_URL` - Redis connection string
+        - `SECRET_KEY` - Django secret key
+        - `DEBUG` - Debug flag
+        
+        ## Deployment
+        This service is deployed on Railway and can be accessed at:
+        https://web-production-641f.up.railway.app/
+        """,
         terms_of_service="https://www.google.com/policies/terms/",
         contact=openapi.Contact(email="contact@example.com"),
         license=openapi.License(name="MIT License"),
     ),
     public=True,
     permission_classes=(permissions.AllowAny,),
+    patterns=[
+        path('api/accounts/', include('accounts.urls')),
+    ],
 )
 
 urlpatterns = [

@@ -25,6 +25,7 @@ def register_user(request):
     Register a new user account.
     
     Creates a new user with the provided information and returns JWT tokens.
+    This endpoint allows users to create an account with email, full name, and password.
     
     ---
     requestBody:
@@ -41,22 +42,72 @@ def register_user(request):
                     properties:
                         full_name:
                             type: string
-                            description: User's full name
+                            description: User's full name (required)
+                            example: "John Doe"
                         email:
                             type: string
                             format: email
-                            description: User's email address (used as username)
+                            description: User's email address (used as username, must be unique)
+                            example: "john@example.com"
                         password:
                             type: string
-                            description: User's password
+                            description: User's password (minimum 8 characters)
+                            example: "securepass123"
                         password_confirm:
                             type: string
-                            description: Password confirmation
+                            description: Password confirmation (must match password)
+                            example: "securepass123"
     responses:
         201:
             description: User registered successfully
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            message:
+                                type: string
+                                example: "User registered successfully"
+                            user:
+                                type: object
+                                properties:
+                                    id:
+                                        type: integer
+                                        example: 1
+                                    full_name:
+                                        type: string
+                                        example: "John Doe"
+                                    email:
+                                        type: string
+                                        example: "john@example.com"
+                            tokens:
+                                type: object
+                                properties:
+                                    access:
+                                        type: string
+                                        description: JWT access token
+                                        example: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+                                    refresh:
+                                        type: string
+                                        description: JWT refresh token
+                                        example: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
         400:
             description: Invalid data provided
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            email:
+                                type: array
+                                items:
+                                    type: string
+                                example: ["This field must be unique."]
+                            password:
+                                type: array
+                                items:
+                                    type: string
+                                example: ["This password is too short."]
     """
     serializer = UserRegistrationSerializer(data=request.data)
     if serializer.is_valid():
@@ -101,16 +152,67 @@ def login_user(request):
                             type: string
                             format: email
                             description: User's email address
+                            example: "john@example.com"
                         password:
                             type: string
                             description: User's password
+                            example: "securepass123"
     responses:
         200:
             description: Login successful
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            message:
+                                type: string
+                                example: "Login successful"
+                            user:
+                                type: object
+                                properties:
+                                    id:
+                                        type: integer
+                                        example: 1
+                                    full_name:
+                                        type: string
+                                        example: "John Doe"
+                                    email:
+                                        type: string
+                                        example: "john@example.com"
+                            tokens:
+                                type: object
+                                properties:
+                                    access:
+                                        type: string
+                                        description: JWT access token
+                                        example: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+                                    refresh:
+                                        type: string
+                                        description: JWT refresh token
+                                        example: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
         400:
             description: Invalid credentials
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            non_field_errors:
+                                type: array
+                                items:
+                                    type: string
+                                example: ["Unable to log in with provided credentials."]
         429:
             description: Too many login attempts
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            detail:
+                                type: string
+                                example: "Request was throttled. Expected available in 60 seconds."
     """
     serializer = UserLoginSerializer(data=request.data)
     if serializer.is_valid():
@@ -154,13 +256,54 @@ def request_password_reset(request):
                             type: string
                             format: email
                             description: User's email address
+                            example: "john@example.com"
     responses:
         200:
             description: Password reset token generated
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            message:
+                                type: string
+                                example: "Password reset token generated successfully"
+                            token:
+                                type: string
+                                description: 32-character secure reset token
+                                example: "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6"
+                            expires_in:
+                                type: string
+                                description: Token expiry time
+                                example: "10 minutes"
         400:
             description: Invalid email format
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            email:
+                                type: array
+                                items:
+                                    type: string
+                                example: ["Enter a valid email address."]
         429:
             description: Too many password reset requests
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            error:
+                                type: string
+                                example: "Too many password reset requests"
+                            message:
+                                type: string
+                                example: "You have exceeded the limit of 3 password reset requests per hour. Please try again later."
+                            retry_after:
+                                type: integer
+                                example: 3600
     """
     serializer = PasswordResetRequestSerializer(data=request.data)
     if serializer.is_valid():
@@ -195,6 +338,7 @@ def confirm_password_reset(request):
     Confirm password reset using token.
     
     Validates the reset token and updates the user's password.
+    Token must be valid and not expired (10-minute expiry).
     
     ---
     requestBody:
@@ -210,18 +354,47 @@ def confirm_password_reset(request):
                     properties:
                         token:
                             type: string
-                            description: Password reset token
+                            description: Password reset token (32 characters)
+                            example: "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6"
                         new_password:
                             type: string
-                            description: New password
+                            description: New password (minimum 8 characters)
+                            example: "newsecurepass123"
                         new_password_confirm:
                             type: string
-                            description: New password confirmation
+                            description: New password confirmation (must match new_password)
+                            example: "newsecurepass123"
     responses:
         200:
             description: Password reset successful
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            message:
+                                type: string
+                                example: "Password reset successful"
         400:
             description: Invalid token or passwords don't match
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            error:
+                                type: string
+                                example: "Invalid or expired token"
+                            new_password:
+                                type: array
+                                items:
+                                    type: string
+                                example: ["This password is too short."]
+                            new_password_confirm:
+                                type: array
+                                items:
+                                    type: string
+                                example: ["Passwords don't match."]
     """
     serializer = PasswordResetConfirmSerializer(data=request.data)
     if serializer.is_valid():
