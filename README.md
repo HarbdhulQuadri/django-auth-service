@@ -2,7 +2,7 @@
 
 A comprehensive Django authentication system with JWT tokens, password reset functionality, PostgreSQL/Redis integration, and production deployment. Built for modern web applications requiring secure user authentication.
 
-## 🚀 Live Demo
+## Live Demo
 
 **Deployment Link:** [https://web-production-641f.up.railway.app/](https://web-production-641f.up.railway.app/)
 
@@ -10,7 +10,7 @@ A comprehensive Django authentication system with JWT tokens, password reset fun
 - **Swagger Documentation:** https://web-production-641f.up.railway.app/swagger/
 - **ReDoc Documentation:** https://web-production-641f.up.railway.app/redoc/
 
-## ✨ Features
+## Features
 
 - **JWT Authentication** - Secure token-based authentication
 - **Custom User Model** - Email-based authentication with full name
@@ -24,7 +24,7 @@ A comprehensive Django authentication system with JWT tokens, password reset fun
 - **Comprehensive Testing** - Unit tests for all functionality
 - **Security First** - Environment variables, password validation, secure tokens
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Backend**: Django 5.2.5 + Django REST Framework
 - **Database**: PostgreSQL
@@ -36,7 +36,7 @@ A comprehensive Django authentication system with JWT tokens, password reset fun
 - **Environment**: python-decouple
 - **Testing**: Django Test Framework
 
-## 📋 Prerequisites
+## Prerequisites
 
 - Python 3.8+
 - PostgreSQL
@@ -44,7 +44,7 @@ A comprehensive Django authentication system with JWT tokens, password reset fun
 - Git
 - Docker & Docker Compose (for containerized development)
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Option 1: Docker Development (Recommended)
 
@@ -117,7 +117,7 @@ A comprehensive Django authentication system with JWT tokens, password reset fun
    - **Admin**: http://localhost:8000/admin/
    - **Swagger Docs**: http://localhost:8000/swagger/
 
-## 🧪 Testing
+## Testing
 
 Run the comprehensive test suite:
 
@@ -135,7 +135,7 @@ python manage.py test accounts.tests.RateLimitingTest
 docker-compose exec web python manage.py test
 ```
 
-## 🔧 Environment Variables
+## Environment Variables
 
 Create a `.env` file based on `env.example`:
 
@@ -162,7 +162,7 @@ REDIS_URL=redis://127.0.0.1:6379/1
 # ALLOWED_HOSTS=your-app.railway.app,your-app.onrender.com
 ```
 
-## 📚 API Endpoints
+## API Endpoints
 
 ### Authentication Endpoints
 
@@ -223,7 +223,7 @@ curl -X POST http://localhost:8000/api/accounts/password/reset/confirm/ \
   }'
 ```
 
-## 🔐 JWT Configuration
+## JWT Configuration
 
 The application uses JWT tokens for authentication:
 
@@ -237,7 +237,7 @@ Include the access token in the Authorization header:
 Authorization: Bearer <your_access_token>
 ```
 
-## 🔄 Password Reset Flow
+## Password Reset Flow
 
 1. **Request Reset**: User requests password reset with email
 2. **Token Generation**: System generates 32-character secure token
@@ -246,7 +246,7 @@ Authorization: Bearer <your_access_token>
 5. **Password Update**: User confirms reset with token and new password
 6. **Token Cleanup**: Token deleted from Redis after successful reset
 
-## 🚀 Deployment
+## Deployment
 
 ### Railway Deployment
 
@@ -283,7 +283,7 @@ Authorization: Bearer <your_access_token>
 4. **Set Build Command**: `pip install -r requirements.txt`
 5. **Set Start Command**: `gunicorn auth_service.wsgi:application`
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 django-auth-service/
@@ -318,42 +318,7 @@ django-auth-service/
 └── runtime.txt             # Python runtime version
 ```
 
-## 🧪 Testing Coverage
-
-The test suite covers:
-
-- **User Model Tests**
-  - User creation with valid data
-  - Superuser creation
-  - String representation
-
-- **Registration Tests**
-  - Valid registration
-  - Invalid email format
-  - Mismatched passwords
-  - Duplicate email
-  - Weak password
-
-- **Login Tests**
-  - Valid credentials
-  - Invalid email
-  - Invalid password
-  - Inactive user
-
-- **Password Reset Tests**
-  - Valid reset request
-  - Invalid email format
-  - Non-existent email
-  - Valid token confirmation
-  - Invalid token
-  - Mismatched passwords
-  - Token expiry
-
-- **Rate Limiting Tests**
-  - Login rate limiting (5/minute)
-  - Password reset rate limiting (3/hour)
-
-## 🔒 Security Features
+## Security Features
 
 - **JWT Authentication** - Secure token-based auth
 - **Password Validation** - Django's built-in validators
@@ -363,24 +328,11 @@ The test suite covers:
 - **CSRF Protection** - Cross-site request forgery protection
 - **XSS Protection** - Cross-site scripting protection
 
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests for new functionality
-5. Run the test suite
-6. Submit a pull request
-
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## 👨‍💻 Author
+## Author
 
 Built as part of the Django Authentication System internship task for Bill Station.
-
----
-
-**Ready for production deployment with comprehensive testing and documentation!** 🚀
 
