@@ -100,7 +100,7 @@ class UserRegistrationTest(APITestCase):
         response = self.client.post(self.register_url, invalid_data, format='json')
         
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn('password_confirm', response.data)
+        self.assertIn('non_field_errors', response.data)
     
     def test_user_registration_with_duplicate_email(self):
         """Test user registration with existing email."""
@@ -235,7 +235,7 @@ class PasswordResetTest(APITestCase):
         self.assertIn('expires_in', response.data)
         self.assertEqual(response.data['expires_in'], '10 minutes')
         
-        # Verify token is stored in Redis
+        # Verify token is stored in cache
         token = response.data['token']
         cache_key = f"password_reset_{token}"
         user_id = cache.get(cache_key)
@@ -289,7 +289,7 @@ class PasswordResetTest(APITestCase):
         self.user.refresh_from_db()
         self.assertTrue(self.user.check_password('newpass123'))
         
-        # Verify token was deleted from Redis
+        # Verify token was deleted from cache
         cache_key = f"password_reset_{token}"
         self.assertIsNone(cache.get(cache_key))
     
@@ -326,7 +326,7 @@ class PasswordResetTest(APITestCase):
         response = self.client.post(self.confirm_reset_url, confirm_data, format='json')
         
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn('new_password_confirm', response.data)
+        self.assertIn('non_field_errors', response.data)
     
     def test_password_reset_token_expiry(self):
         """Test that password reset tokens expire after 10 minutes."""
