@@ -334,6 +334,5 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Author
 
-Built as part of the Django Authentication System internship task for Bill Station.
 
 
